@@ -8,3 +8,4 @@ waitress~=2.1.2
 google-api-python-client
 regex~=2023.10.3
 flask_sqlalchemy
+gunicorn
