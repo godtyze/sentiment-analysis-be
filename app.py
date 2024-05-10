@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-import joblib
 import pandas as pd
 from flask_cors import CORS
 from youtube_component import get_youtube_comments
