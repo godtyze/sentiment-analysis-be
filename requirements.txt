@@ -9,3 +9,4 @@ google-api-python-client
 regex~=2023.10.3
 flask_sqlalchemy
 gunicorn
+transformers~=4.40.2
