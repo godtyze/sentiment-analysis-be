@@ -13,7 +13,7 @@ def get_youtube_comments(video_id):
 
     comments = []
     page_token = None
-    while len(comments) < 300:
+    while len(comments) < 500:
         request = youtube.commentThreads().list(
             part="snippet",
             videoId=video_id,
@@ -27,14 +27,14 @@ def get_youtube_comments(video_id):
             text = comment['textDisplay']
 
             # Regex to match non-English characters
-            if re.match("^[a-zA-Z0-9\s,.'-?!]*$", text):
-                comments.append([
-                    comment['authorDisplayName'],
-                    comment['publishedAt'],
-                    comment['updatedAt'],
-                    comment['likeCount'],
-                    text
-                ])
+            # if re.match("^[a-zA-Z0-9\s,.'-?!]*$", text):
+            comments.append([
+                comment['authorDisplayName'],
+                comment['publishedAt'],
+                comment['updatedAt'],
+                comment['likeCount'],
+                text
+             ])
 
         page_token = response.get('nextPageToken')
         if not page_token:  # Break the loop if there is no next page
