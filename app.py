@@ -9,14 +9,14 @@ from transformers import pipeline
 app = Flask(__name__)
 CORS(app)
 
-
 # Load your trained model and vectorizer
 # model = joblib.load('trained_model.pkl')
 # vectorizer = joblib.load('vectorizer.pkl')
 
 model = pipeline(
     model="lxyuan/distilbert-base-multilingual-cased-sentiments-student",
-    return_all_scores=True
+    return_all_scores=True,
+    truncation=True,
 )
 
 
@@ -31,7 +31,7 @@ def analyze_text():
 
     prediction = model(text)[0]
 
-    return jsonify({'text': text, 'Sentiment': prediction})
+    return jsonify({'text': text, 'sentiment': prediction})
 
 
 @app.route('/upload', methods=['POST'])
@@ -53,7 +53,7 @@ def upload_file():
         for text in df[column_name]:
             predictions.append(model(text)[0])
 
-        df['Sentiment'] = [pred for pred in predictions]
+        df['sentiment'] = [pred for pred in predictions]
 
         # Convert dataframe to a list of dictionaries for JSON response
         results = df.to_dict(orient='records')
@@ -74,9 +74,12 @@ def analyze_youtube_comments():
     predictions = []
 
     for text in comments_df['text']:
+        if len(text) > 512:
+            text = text[:512]
+
         predictions.append(model(text)[0])
 
-    comments_df['Sentiment'] = [pred for pred in predictions]
+    comments_df['sentiment'] = [pred for pred in predictions]
 
     # Convert dataframe to a list of dictionaries for JSON response
     results = comments_df.to_dict(orient='records')
@@ -96,6 +99,7 @@ def calculate_sentiment_percentages():
     sentiment_percentages = sentiment_counts.to_dict()
 
     return jsonify({'sentiment_percentages': sentiment_percentages})
+
 
 @app.route('/export-csv', methods=['POST'])
 def export_csv():
